@@ -3,46 +3,57 @@ rm(list=ls(all=TRUE)) # clear memory
 
 packages<- c("maptools","rgdal","leaflet","htmlwidgets") # list the packages that you'll need
 lapply(packages, require, character.only=T) # load the packages, if they don't load you might need to install them first
-setwd("E:\\GISWork_2\\HUEND\\SouthBend\\WebApplication\\")
-#out.location <- "N:\\www\\testing\\"
+#setwd("E:\\GIT_Checkouts\\BuildingSouthBend\\DataProcessing\\")
+out.dir.name <- "WebData"
+data.dir.name <- "SpatialData"
+district.json.name <- file.path("../LeafletModules/WebData","Districts.js")
+out.path <- file.path(getwd(),out.dir.name)
+
+
+
 active.sections <- c("West Washington","Downtown","Chapin Park","West North Shore")
 
 #Loading and subsetting historic district data
-historic.districts <- readOGR(dsn = ".", layer = "Historic_Districts_LL")
+historic.districts <- readOGR(dsn = "SpatialData", layer = "Historic_Districts_LL")
 proj4string(historic.districts) <- CRS("+init=epsg:3857")  #I have no idea why this is required.
 historic.districts<- spTransform(historic.districts, CRS("+init=epsg:3857"))
-sub.districts<- historic.districts[historic.districts$District_N %in% active.sections,]
 
 #adding label locations to historic districts
-label.locs <- read.csv("District_extraData.csv")
-label.locs$lab_both <- paste("[",label.locs$lab_Lat,",",label.locs$lab_Lon,"]",sep = "")
+label.locs <- read.csv(file.path(data.dir.name, "District_extraData.csv"))
+# label.locs$lab_both <- paste("[",label.locs$lab_Lat,",",label.locs$lab_Lon,"]",sep = "")
 
 historic.districts <- merge(historic.districts,label.locs,by="District_N")
-
+historic.districts@data$used <- 0
+historic.districts@data$used[historic.districts@data$District_N %in% active.sections] <- 1
 
 
 #Loading and subsetting building data
-buildings.table <- read.csv("Historic-District-Structures_ALL.csv")
-coordinates(buildings.table)=~Long+Lat
-proj4string(buildings.table) <- CRS("+init=epsg:3857")
-sub.buildings <- buildings.table[sub.districts, ]
-
-historic.districts@data$used <- 0
-historic.districts@data$used[historic.districts@data$District_N %in% active.sections] <- 1
+# buildings.table <- read.csv("Historic-District-Structures_ALL.csv")
+# coordinates(buildings.table)=~Long+Lat
+# proj4string(buildings.table) <- CRS("+init=epsg:3857")
+# sub.buildings <- buildings.table[sub.districts, ]
+# 
+# 
 
 
 #writeOGR(sub.districts, dsn="sub.districts.kml", layer= "sub.districts", driver="KML", dataset_options=c("NameField=name"))
 
 
-writeOGR(historic.districts, "test_geojson", layer="historic.districts", driver="GeoJSON")
-text.jspn <- readChar("test_geojson", file.info("test_geojson")$size)
-text.jspn2 <- paste("var districts = ",text.jspn,";", sep="") 
-write(text.jspn2, "N:\\www\\testing\\New\\again.js")
+writeOGR(historic.districts, "temp", layer="historic.districts", driver="GeoJSON")
+file.copy("temp", district.json.name, overwrite = T)
+file.remove("temp")
+text.json <- readChar(district.json.name, file.info(district.json.name)$size)
+text.json <- paste("var districts = ",text.json,";", sep="") 
+write(text.json,district.json.name)
 
 
 
 
-
+if(F){
+        again.json <- readChar( file.path("../LeafletModules/WebData","again.js"), file.info( file.path("../LeafletModules/WebData","again.js"))$size)
+        District.json <- readChar(district.json.name, file.info(district.json.name)$size)
+        identical(again.json,District.json)        
+}
 
 # 
 # #Creating the leaflet instance
