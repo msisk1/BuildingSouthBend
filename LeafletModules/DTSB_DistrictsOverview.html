@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Test</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+</head>
+<body>
+	<div id="map" style="width: 600px; height: 400px"></div>
+
+	<script src="again.js" type="text/javascript"></script>
+	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	<script src="http://leaflet.github.io/Leaflet.label/leaflet.label.js"></script>
+	<script src="L.Control.MousePosition.js"></script>
+	
+	<style>
+	
+	.my-label {
+		position: absolute;
+		width:1000px;
+		text-align: center;
+		font-size:15px;
+		text-shadow: 2px 2px white;
+		color: white;
+  
+		text-shadow: 3px 3px 0 #000,  
+		-1px -1px 0 #000,  
+		1px -1px 0 #000,
+		-1px  1px 0 #000,
+		1px  1px 0 #000;
+	}
+
+	</style>
+	
+	<script>
+		var stroke = .1;
+		var opaci = .7;
+		var baseURL = "http://buildingsouthbend.nd.edu/historic-districts/"
+	
+	
+		var map = L.map('map').setView([41.68,-86.26], 14);
+		map.options.maxZoom =15;
+		map.options.minZoom=13;
+		var Esri_WorldTopoMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+			attribution: 'Tiles &copy; Esri and the GIS User Community'
+		});
+		
+		Esri_WorldTopoMap.addTo(map);
+
+		function onEachPolyFeature(feature, layer) {
+			var stub = feature.properties.stub
+			layer.on('click', function (){
+				top.location.href = baseURL + stub
+			});
+			
+			var labLoc = L.latLng(feature.properties.lab_Lat,feature.properties.lab_Lon)
+	
+			var label = L.marker(labLoc, {
+				icon: L.divIcon({
+				className: 'my-label',
+				html: feature.properties.District_N,
+				iconSize: [100, 40]
+				})
+			}).addTo(map);
+			label.options.clickable = true;  
+			label.on('click',function(){    
+				top.location.href = baseURL + stub
+			})  
+		} //end onEachPolyFeature
+
+
+		var districtsMap = L.geoJson(districts, {	
+			filter: function (feature, layer) {
+				if (feature.properties) {
+					// If the property "used" exists and is true, return false (don't render features under construction)
+					return feature.properties.used == 1;
+				}
+				return false;
+			},
+			style: function(feature) {
+
+				switch (feature.properties.District_N) {
+					case 'Chapin Park': 		return {color: "#ff0000", weight : stroke, fillOpacity: opaci};
+					case 'West Washington':   	return {color: "#0000ff", weight : stroke, fillOpacity: opaci};
+					case 'Downtown':   			return {color: "#9370db", weight : stroke, fillOpacity: opaci};
+					case 'West North Shore':    return {color: "#008000", weight : stroke, fillOpacity: opaci};
+				}
+			},
+			onEachFeature: onEachPolyFeature
+		});
+		districtsMap.addTo(map);
+		
+		
+		
+		var popup = L.popup();
+		
+
+	</script>
+</body>
+</html>
