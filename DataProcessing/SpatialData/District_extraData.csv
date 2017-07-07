@@ -1,19 +1,19 @@
-District_N,lab_Lat,lab_Lon,stub
-West North Shore,41.689,-86.254,west-north-shore
-Edgewater Place,,,
-Lincolnway East,,,
-Riverside Drive,,,
-East Wayne Street,,,
-Taylor's Field,,                           ,
-River Bend,,,
-North St. Joseph Street,,,
-Chapin Park,41.685,-86.257,chapin-park
-West Washington,41.6769727471,-86.26019,west-washington
-Muessel-Drewry's Brewery,,,
-Singer Manufacturing-South Bend Lathe Co.,,,
-East Washington Street,,,
-Howard Park,,,
-Leeper Park,,                              ,
-South Michigan Street,,,
-St. Casimir Parish,,,
-Downtown,41.677,-86.253,downtown-south-bend
+"District_N","lab_Lat","lab_Lon","stub"
+"West North Shore",41.689,-86.254,"west-north-shore"
+"Edgewater Place",41.669368,-86.241826,"edgewater-place"
+"Lincolnway East",41.660246,-86.23441,"lincolnway-east"
+"Riverside Drive",41.690186,-86.264174,"riverside-drive"
+"East Wayne Street",41.674028,-86.233195,"east-wayne-street"
+"Taylor's Field",41.669666,-86.249083,"taylors-field"
+"River Bend",41.684517,-86.247567,"river-bend"
+"North St. Joseph Street",41.683032,-86.250294,"north-saint-joseph-street"
+"Chapin Park",41.685,-86.257,"chapin-park"
+"West Washington",41.6769727471,-86.26019,"west-washington"
+"Muessel-Drewry's Brewery",,,
+"Singer Manufacturing-South Bend Lathe Co.",,,
+"East Washington Street",,,
+"Howard Park",,,
+"Leeper Park",,"                              ",
+"South Michigan Street",,,
+"St. Casimir Parish",,,
+"Downtown",41.677,-86.253,"downtown-south-bend"
