@@ -49,10 +49,76 @@
 		var stroke = .1;
 		var opaci = .7;
 		var baseURL = "https://buildingsouthbend.nd.edu/historic-districts/"
-	
+		var propURL = "https://buildingsouthbend.nd.edu/properties/"
 		var map = L.map('map').setView([41.68,-86.25], 14);
 		map.options.maxZoom =17;
 		map.options.minZoom=13;
+		
+		
+		
+		function getQueryVariable(variable){
+			var query = window.location.search.substring(1);
+			var vars = query.split("&");
+			for (var i=0;i<vars.length;i++) {
+				   var pair = vars[i].split("=");
+				   if(pair[0] == variable){return pair[1];}
+			}//end for
+			return(false);
+		}//end function getQueryVariable
+		
+		var pathDistict = getQueryVariable("District")
+		switch (pathDistict) {
+			case "west-washington":
+				var pointFilter = "West Washington"
+				var polyFilter = "West Washington"
+				break;		
+			case "downtown-south-bend":
+				var pointFilter = "Downtown Historic Registry"
+				var polyFilter = "Downtown"
+				break;	
+			case "river-bend":
+				var pointFilter = "River Bend"
+				var polyFilter = "River Bend"
+				break;	
+			case "chapin-park":
+				var pointFilter = "Chapin Park"
+				var polyFilter = "Chapin Park"
+				break;	
+			case "west-north-shore":
+				var pointFilter =  "West North Shore Drive"
+				var polyFilter = "West North Shore"
+				break;	
+			case "riverside-drive":
+				var pointFilter =  "Riverside Drive"
+				var polyFilter = "Riverside Drive"
+				break;	
+			case "east-wayne-street":
+				var pointFilter =  "East Wayne Street"
+				var polyFilter = "East Wayne Street"
+				break;	
+			case "edgewater-place":
+				var pointFilter =  "Edgewater Place"
+				var polyFilter = "Edgewater Place"
+				break;	
+			case "lincolnway-east":
+				var pointFilter =  "Lincolnway East"
+				var polyFilter = "Lincolnway East"
+				break;	
+			case "north-saint-joseph-street":
+				var pointFilter =  "North St. Joseph Street"
+				var polyFilter = "North St. Joseph Street"
+				break;	
+			case "taylors-field":
+				var pointFilter =  "Taylor's Field"
+				var polyFilter = "Taylor's Field"
+				break;	
+			default:    	
+				var pointFilter = "none"
+				var polyFilter = "none"
+				break;	
+						}//end switch
+		
+		
 		var Esri_WorldTopoMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
 			attribution: 'Tiles &copy; Esri and the GIS User Community'
 		});
@@ -88,17 +154,16 @@
     }});
 		buildingsMap.addTo(map);
 	
-//}
 		function yourOnEachFeatureFunction(feature, layer){
 				
         layer.bindPopup(
 								"<b>South Bend Historic Properties</b></br><hr>"+
                                 "<b>Historic Distric: </b>"+String(feature.properties.Distrct)+"<br/>"+
-                                "<b>Name: </b>"+String(feature.properties.Cstm_Nm)+"<br/>")
-                                "<b>Address: </b>"+String(feature.properties.Address)+"<br/>"
-                                //"<b>Constrution Date: </b>",buildings.table$Date,"<br/>",
-                              //  "<br>",
-                               // "<b>More information: </b><a href=",root.url,buildings.table$Slug,">More //Information</a><br>"feature.properties.Distrct);
+                                "<b>Name: </b>"+String(feature.properties.Cstm_Nm)+"<br/>"+
+                                "<b>Address: </b>"+String(feature.properties.Address)+"<br/>"+
+                                "<b>Constrution Date: </b>"+String(feature.properties.Date)+"<br/>"+
+                                "<br>"+
+                                "<b>More information: </b><a href="+propURL+String(feature.properties.Slug)+">Click Here</a><br>");
     }
 
 	</script>
