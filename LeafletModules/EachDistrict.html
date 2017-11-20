@@ -122,7 +122,6 @@
 		var Esri_WorldTopoMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
 			attribution: 'Tiles &copy; Esri and the GIS User Community'
 		});
-		
 		Esri_WorldTopoMap.addTo(map);
 
 		
@@ -143,6 +142,7 @@
 			}, //end filter
 
 		});
+		
 		districtsMap.addTo(map);
 		map.fitBounds(districtsMap.getBounds());   //once it loads the polygons, it zooms to them
 		
@@ -161,7 +161,7 @@
 			onEachFeature: customBuldingOnEach,
 			pointToLayer: function (feature, latlng) {
 				return L.circleMarker(latlng,{
-										radius: 3,
+										radius: 5,
 										fillColor: "blue",
 										color: "#000",
 										weight: 1,
@@ -173,16 +173,22 @@
 		buildingsMap.addTo(map);
 	
 		function customBuldingOnEach(feature, layer){
-				
-        layer.bindPopup(
-								"<b>South Bend Historic Properties</b></br><hr>"+
-                                "<b>Historic Distric: </b>"+String(feature.properties.Distrct)+"<br/>"+
-                                "<b>Name: </b>"+String(feature.properties.Cstm_Nm)+"<br/>"+
-                                "<b>Address: </b>"+String(feature.properties.Address)+"<br/>"+
-                                "<b>Constrution Date: </b>"+String(feature.properties.Date)+"<br/>"+
-                                "<br>"+pointFilter+
-                                "<b>More information: </b><a href="+propURL+String(feature.properties.Slug)+">Click Here</a><br>");
-    }
+			var dist = feature.properties.Distrct;
+			var nameSTR = feature.properties.Cstm_Nm;
+			if (nameSTR == null) {
+				nameSTR = "";
+			} else {
+				var nameSTR = feature.properties.Cstm_Nm;
+			};//end else
+			layer.bindPopup(
+				"<b>South Bend Historic Properties</b></br><hr>"+
+				"<b>Historic District: </b>"+dist+"<br/>"+
+				"<b>Name: </b>"+nameSTR+"<br/>"+
+				"<b>Address: </b>"+String(feature.properties.Address)+"<br/>"+
+				"<b>Constrution Date: </b>"+String(feature.properties.Date)+"<br/>"+
+				"<br>"+
+				"<b>More information: </b><a href="+propURL+String(feature.properties.Slug)+" target=_blank>Click Here</a><br>");
+		}//end custom popup
 
 	</script>
 </body>

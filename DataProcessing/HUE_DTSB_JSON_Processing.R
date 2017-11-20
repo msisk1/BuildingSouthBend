@@ -3,7 +3,7 @@ rm(list=ls(all=TRUE)) # clear memory
 
 packages<- c("maptools","rgdal","leaflet","htmlwidgets") # list the packages that you'll need
 lapply(packages, require, character.only=T) # load the packages, if they don't load you might need to install them first
-setwd("N:/www_pages_moved_to_AWS/BuildingSouthBend/DataProcessing")
+setwd("E:/GIT_Checkouts/BuildingSouthBend/DataProcessing")
 out.dir.name <- "WebData"
 data.dir.name <- "SpatialData"
 district.json.name <- file.path("../LeafletModules/WebData","Districts.js")
@@ -21,7 +21,7 @@ if(property.download){
         buildings.table<- buildings.table[complete.cases(buildings.table[ ,c("Longitude","Latitude")]),]
         coordinates(buildings.table)=~Longitude+Latitude
         proj4string(buildings.table) <- CRS(latlong)
-        writeOGR(buildings.table, dsn="." ,layer="All_SB_Buildings_20171117",driver="ESRI Shapefile",overwrite_layer = T)
+#        writeOGR(buildings.table, dsn="." ,layer="All_SB_Buildings_20171117",driver="ESRI Shapefile",overwrite_layer = T)
         
 }
 
