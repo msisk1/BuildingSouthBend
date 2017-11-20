@@ -132,16 +132,33 @@
 			filter: function (feature, layer) {
 				if (feature.properties) {
 					// If the property "used" exists and is true, return false (don't render features under construction)
-					return feature.properties.used == 1;
-				}
+					if (polyFilter == "none"){
+						return feature.properties.used == 1;
+					}else{
+						return feature.properties.District_N == polyFilter;
+					}//end else
+				}//end if feature properties exists
+				
 				return false;
-			},
+			}, //end filter
 
 		});
 		districtsMap.addTo(map);
+		map.fitBounds(districtsMap.getBounds());   //once it loads the polygons, it zooms to them
 		
 		var buildingsMap = L.geoJson(buildings, {
-			onEachFeature: yourOnEachFeatureFunction,
+			filter: function (feature, layer) {
+				if (feature.properties) {
+					if (pointFilter == "none"){
+						return feature.properties;
+					}else{
+						return feature.properties.Distrct == pointFilter;
+					}//end else
+				}//end if feature properties exists
+				
+				return false;
+			}, //end filter
+			onEachFeature: customBuldingOnEach,
 			pointToLayer: function (feature, latlng) {
 				return L.circleMarker(latlng,{
 										radius: 3,
@@ -150,11 +167,12 @@
 										weight: 1,
 										opacity: 1,
 										fillOpacity: 0.8
-});
-    }});
+				});//end CircleMarkers
+			}//end Point to Layer
+		});//end GeoJSON Layer def
 		buildingsMap.addTo(map);
 	
-		function yourOnEachFeatureFunction(feature, layer){
+		function customBuldingOnEach(feature, layer){
 				
         layer.bindPopup(
 								"<b>South Bend Historic Properties</b></br><hr>"+
@@ -162,7 +180,7 @@
                                 "<b>Name: </b>"+String(feature.properties.Cstm_Nm)+"<br/>"+
                                 "<b>Address: </b>"+String(feature.properties.Address)+"<br/>"+
                                 "<b>Constrution Date: </b>"+String(feature.properties.Date)+"<br/>"+
-                                "<br>"+
+                                "<br>"+pointFilter+
                                 "<b>More information: </b><a href="+propURL+String(feature.properties.Slug)+">Click Here</a><br>");
     }
 
