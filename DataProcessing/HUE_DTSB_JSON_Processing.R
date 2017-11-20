@@ -3,28 +3,27 @@ rm(list=ls(all=TRUE)) # clear memory
 
 packages<- c("maptools","rgdal","leaflet","htmlwidgets") # list the packages that you'll need
 lapply(packages, require, character.only=T) # load the packages, if they don't load you might need to install them first
-setwd("N:/www/BuildingSouthBend/DataProcessing")
+setwd("N:/www_pages_moved_to_AWS/BuildingSouthBend/DataProcessing")
 out.dir.name <- "WebData"
 data.dir.name <- "SpatialData"
 district.json.name <- file.path("../LeafletModules/WebData","Districts.js")
 out.path <- file.path(getwd(),out.dir.name)
 
 
-property.download <- FALSE
-
+property.download <- TRUE
+latlong <- "+init=epsg:4326"
 
 active.sections <- c("West Washington","Downtown","Chapin Park","West North Shore", "River Bend","Riverside Drive","East Wayne Street",
                      "Edgewater Place","Lincolnway East","North St. Joseph Street","Taylor's Field")
 if(property.download){
         download.file("http://buildingsouthbend.nd.edu/properties.csv", destfile = "properties.csv")
         buildings.table <- read.csv("properties.csv",stringsAsFactors = F)
+        buildings.table<- buildings.table[complete.cases(buildings.table[ ,c("Longitude","Latitude")]),]
         coordinates(buildings.table)=~Longitude+Latitude
         proj4string(buildings.table) <- CRS(latlong)
-        writeOGR(buildings.table, dsn="." ,layer="All_SB_Buildings_20170706",driver="ESRI Shapefile",overwrite_layer = T)
+        writeOGR(buildings.table, dsn="." ,layer="All_SB_Buildings_20171117",driver="ESRI Shapefile",overwrite_layer = T)
         
 }
-
-
 
 
 #Loading and subsetting historic district data
@@ -39,6 +38,28 @@ label.locs <- read.csv(file.path(data.dir.name, "District_extraData.csv"))
 historic.districts <- merge(historic.districts,label.locs,by="District_N")
 historic.districts@data$used <- 0
 historic.districts@data$used[historic.districts@data$District_N %in% active.sections] <- 1
+
+#Creating a leaflet module for each district
+
+buildings.table$popupw <- paste(sep = "",  "<b>",buildings.table$Slug,"</b><br/>",
+                                          "Name = ",buildings.table$Custom.Name,"<br/>"
+)
+
+leaflet() %>% 
+  addTiles() %>% #basic OSM
+  addMarkers(data = buildings.table, popup = buildings.table$popupw)  %>%#For the points
+  addPolygons(data = historic.districts[which(historic.districts$used==1),])
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BSB_Districts</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="leaflet/leaflet.css" />
+</head>
+<body>
+	
+	<div id="map"></div>
+	<script src="WebData/Districts.js" type="text/javascript"></script>
+	<script src="WebData/Buildings.js" type="text/javascript"></script>
+
+	<script src="leaflet/leaflet.js"></script>
+	<script src="https://leaflet.github.io/Leaflet.label/leaflet.label.js"></script>
+
+	
+	<style>
+	 body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+	.my-label {
+		position: absolute;
+		width:1000px;
+		text-align: center;
+		font-size:15px;
+		text-shadow: 1px 1px white;
+		color: white;
+  
+		text-shadow: 3px 3px 0 #000,  
+		-1px -1px 0 #000,  
+		1px -1px 0 #000,
+		-1px  1px 0 #000,
+		1px  1px 0 #000;
+	}
+
+	</style>
+	
+	<script>
+		var stroke = .1;
+		var opaci = .7;
+		var baseURL = "https://buildingsouthbend.nd.edu/historic-districts/"
+	
+		var map = L.map('map').setView([41.68,-86.25], 14);
+		map.options.maxZoom =17;
+		map.options.minZoom=13;
+		var Esri_WorldTopoMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+			attribution: 'Tiles &copy; Esri and the GIS User Community'
+		});
+		
+		Esri_WorldTopoMap.addTo(map);
+
+		
+
+
+		var districtsMap = L.geoJson(districts, {	
+			filter: function (feature, layer) {
+				if (feature.properties) {
+					// If the property "used" exists and is true, return false (don't render features under construction)
+					return feature.properties.used == 1;
+				}
+				return false;
+			},
+
+		});
+		districtsMap.addTo(map);
+		
+		var buildingsMap = L.geoJson(buildings, {
+			onEachFeature: yourOnEachFeatureFunction,
+			pointToLayer: function (feature, latlng) {
+				return L.circleMarker(latlng,{
+										radius: 3,
+										fillColor: "blue",
+										color: "#000",
+										weight: 1,
+										opacity: 1,
+										fillOpacity: 0.8
+});
+    }});
+		buildingsMap.addTo(map);
+	
+//}
+		function yourOnEachFeatureFunction(feature, layer){
+				
+        layer.bindPopup(
+								"<b>South Bend Historic Properties</b></br><hr>"+
+                                "<b>Historic Distric: </b>"+String(feature.properties.Distrct)+"<br/>"+
+                                "<b>Name: </b>"+String(feature.properties.Cstm_Nm)+"<br/>")
+                                "<b>Address: </b>"+String(feature.properties.Address)+"<br/>"
+                                //"<b>Constrution Date: </b>",buildings.table$Date,"<br/>",
+                              //  "<br>",
+                               // "<b>More information: </b><a href=",root.url,buildings.table$Slug,">More //Information</a><br>"feature.properties.Distrct);
+    }
+
+	</script>
+</body>
+</html>
